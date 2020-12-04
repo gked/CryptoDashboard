@@ -1,0 +1,69 @@
+<html>
+    <body>
+        <p><span>BTC Price</span> $<span contenteditable="true" id="priceDisplay">19000</span></p>
+        <input placeholder="bitcoin" type="number" id="bitcoinInput">
+        <input placeholder="satoshi" type="number" id="satoshiInput">
+        <input placeholder="dollars" type="number" id="dollarInput">
+
+        <script>
+            // current price of one bitcoin in dollars
+            let bitcoinPrice = document.getElementById('priceDisplay').innerText // todo: hook it up to the service
+            // amount  of satoshis in one bitcoin
+            const oneHundredMillion = 100000000
+            // assign user-friendly names for elements to make it easier working with them
+            const priceDisplay = document.getElementById('priceDisplay')
+            const bitcoinInput = document.getElementById('bitcoinInput')
+            const satoshiInput = document.getElementById('satoshiInput')
+            const dollarInput = document.getElementById('dollarInput')
+
+            priceDisplay.innerText = bitcoinPrice
+
+            // listen to input events to convert a value 
+            // entered by the user to another representations
+            // e.g if bitcoin input is being updated - convert the value 
+            // to satoshi and dollar ammount
+            document.addEventListener('input', updateValue)
+
+            /* updateValue function updates fields related to the field 
+               being updated by the user
+            */
+            function updateValue(e) {
+                /* bitcoinInput filed is being updated:
+                   1. convert to satoshi by mutliplying bitcoin value by oneHundredMillion satoshi (amount of satoshi in one bitcoin)
+                   2. convert to dollars by mutliplying bitcoin value by price of bitcoin constant. bitcoinPrice constant is updated dynamicall by calling into the service
+                */
+                if(e.srcElement.id === 'bitcoinInput') {
+                    const satoshiEquivalent = e.target.value * oneHundredMillion
+                    const dollarEquivalent = e.target.value * getBitcoinPrice()
+                    satoshiInput.value = satoshiEquivalent
+                    dollarInput.value = dollarEquivalent
+                }
+                /* satoshiInput filed is being updated:
+                   1. convert to bitcoin by dividing satoshi value by oneHundredMillion satoshi (amount of satoshi in one bitcoin)
+                   2. convert to dollars by mutliplying bitcoin value derived in step one by price of bitcoin constant. bitcoinPrice constant is updated dynamicall by calling into the service.
+                */
+                else if(e.srcElement.id === 'satoshiInput') {
+                    const bitcoinEquivalent = e.target.value / oneHundredMillion
+                    const dollarEquivalent = bitcoinEquivalent * getBitcoinPrice()
+                    bitcoinInput.value = bitcoinEquivalent
+                    dollarInput.value = dollarEquivalent
+                }
+                /* dollarInput filed is being updated:
+                   1. convert to bitcoin by dividing dollar value by bitcoinPrice constant. bitcoinPrice constant is updated dynamicall by calling into the service.
+                   2. convert to satoshi by mutliplying bitcoin value derived in step one by oneHundredMillion constant. oneHundredMillion - amount of satoshi in one bitcoin
+                */
+                else if(e.srcElement.id === 'dollarInput') {
+                    const bitcoinEquivalent = e.target.value / getBitcoinPrice()
+                    const satoshiEquivalent = bitcoinEquivalent * oneHundredMillion
+                    bitcoinInput.value = bitcoinEquivalent
+                    satoshiInput.value = satoshiEquivalent
+                }
+            }
+
+            function getBitcoinPrice() {
+                bitcoinPrice = document.getElementById('priceDisplay').innerText
+                return bitcoinPrice
+            }
+        </script>
+    </body>
+</html>
