@@ -1,13 +1,14 @@
 <html>
     <body>
-        <p><span>BTC Price</span> $<span contenteditable="true" id="priceDisplay">19000</span></p>
+        <p><span>BTC Price</span> $<span contenteditable="true" id="priceDisplay"></span></p>
         <input placeholder="bitcoin" type="number" id="bitcoinInput">
         <input placeholder="satoshi" type="number" id="satoshiInput">
         <input placeholder="dollars" type="number" id="dollarInput">
+        <input type="button" value="GetPrice" onclick="getBitcoinPrice()">
 
         <script>
             // current price of one bitcoin in dollars
-            let bitcoinPrice = document.getElementById('priceDisplay').innerText // todo: hook it up to the service
+            let bitcoinPrice = 0
             // amount  of satoshis in one bitcoin
             const oneHundredMillion = 100000000
             // assign user-friendly names for elements to make it easier working with them
@@ -16,7 +17,11 @@
             const satoshiInput = document.getElementById('satoshiInput')
             const dollarInput = document.getElementById('dollarInput')
 
-            priceDisplay.innerText = bitcoinPrice
+            // on DOMLoad, make a call into the ticker to get Bitcoin price
+            window.onload = (event) => {
+                console.log('page is fully loaded')
+                getBitcoinPriceAndUpdateVisuals()
+            };
 
             // listen to input events to convert a value 
             // entered by the user to another representations
@@ -34,7 +39,7 @@
                 */
                 if(e.srcElement.id === 'bitcoinInput') {
                     const satoshiEquivalent = e.target.value * oneHundredMillion
-                    const dollarEquivalent = e.target.value * getBitcoinPrice()
+                    const dollarEquivalent = e.target.value * bitcoinPrice
                     satoshiInput.value = satoshiEquivalent
                     dollarInput.value = dollarEquivalent
                 }
@@ -44,7 +49,7 @@
                 */
                 else if(e.srcElement.id === 'satoshiInput') {
                     const bitcoinEquivalent = e.target.value / oneHundredMillion
-                    const dollarEquivalent = bitcoinEquivalent * getBitcoinPrice()
+                    const dollarEquivalent = bitcoinEquivalent * bitcoinPrice
                     bitcoinInput.value = bitcoinEquivalent
                     dollarInput.value = dollarEquivalent
                 }
@@ -53,16 +58,25 @@
                    2. convert to satoshi by mutliplying bitcoin value derived in step one by oneHundredMillion constant. oneHundredMillion - amount of satoshi in one bitcoin
                 */
                 else if(e.srcElement.id === 'dollarInput') {
-                    const bitcoinEquivalent = e.target.value / getBitcoinPrice()
+                    const bitcoinEquivalent = e.target.value / bitcoinPrice
                     const satoshiEquivalent = bitcoinEquivalent * oneHundredMillion
                     bitcoinInput.value = bitcoinEquivalent
                     satoshiInput.value = satoshiEquivalent
                 }
             }
-
-            function getBitcoinPrice() {
-                bitcoinPrice = document.getElementById('priceDisplay').innerText
-                return bitcoinPrice
+            /*  getBitcoinPriceAndUpdateVisuals calls into the ticker, returns json
+                of bitcoin prices in different currencies. It then picks price in US dollars
+                and updates priceDisplay input and bitcoinPrice 
+            */
+            function getBitcoinPriceAndUpdateVisuals() {
+                let xhr = new XMLHttpRequest()
+                xhr.open('GET', 'https://blockchain.info/ticker', true)
+                xhr.send()
+                xhr.onload = function() {
+                    const jsonData = JSON.parse(xhr.response)
+                    const lastBitcoinPrice = jsonData.USD.last
+                    bitcoinPrice = priceDisplay.innerText = lastBitcoinPrice
+                }
             }
         </script>
     </body>
