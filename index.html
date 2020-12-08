@@ -1,11 +1,37 @@
+<!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Bitcoin and Satoshi Converter</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    </head>
     <body>
-        <p><span>BTC Price</span> $<span contenteditable="true" id="priceDisplay"></span></p>
-        <input placeholder="bitcoin" type="number" id="bitcoinInput">
-        <input placeholder="satoshi" type="number" id="satoshiInput">
-        <input placeholder="dollars" type="number" id="dollarInput">
-        <input type="button" value="GetPrice" onclick="getBitcoinPrice()">
-
+        <div>
+            <div class="field-label is-normal is-justify-content-center has-text-centered mt-5">
+                <label class="label tag is-primary is-medium"><span>Current Bitcoin Price</span> =  $ <span contenteditable="true" id="priceDisplay"></span></label>
+             </div>
+            <section class="section is-max-desktop has-background-primary-light mt-2">
+                <div class="is-family-monospace container">
+                    <h1 class="has-text-centered title is-size-4 is-justify-content-center mt-s">Convert between Bitcoins, Satoshis and Dollars</h1>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input is-primary" placeholder="Bitcoin Amount" type="number" id="bitcoinInput">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input is-primary" placeholder="Satoshi Amount" type="number" id="satoshiInput">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input is-primary" placeholder="Dollar Ammount" type="number" id="dollarInput">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
         <script>
             // current price of one bitcoin in dollars
             let bitcoinPrice = 0
@@ -19,7 +45,6 @@
 
             // on DOMLoad, make a call into the ticker to get Bitcoin price
             window.onload = (event) => {
-                console.log('page is fully loaded')
                 getBitcoinPriceAndUpdateVisuals()
             };
 
