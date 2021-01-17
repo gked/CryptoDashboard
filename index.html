@@ -28,9 +28,10 @@
             const satoshiInput = document.getElementById('satoshiInput')
             const dollarInput = document.getElementById('dollarInput')
 
-            // on DOMLoad, make a call into the ticker to get Bitcoin price
+            // on DOMLoad, make a call into the ticker to get Bitcoin 
+            // price every minute
             window.onload = (event) => {
-                getBitcoinPriceAndUpdateVisuals()
+                refreshBTCPrice()
             };
 
             // listen to input events to convert a value 
@@ -74,19 +75,36 @@
                     satoshiInput.value = satoshiEquivalent
                 }
             }
-            /*  getBitcoinPriceAndUpdateVisuals calls into the ticker, returns json
-                of bitcoin prices in different currencies. It then picks price in US dollars
-                and updates priceDisplay input and bitcoinPrice 
+
+            /*  getBitcoinPrice calls into the ticker, returns json
+                of bitcoin prices in different currencies and calls
+                paintBTCPrice
             */
-            function getBitcoinPriceAndUpdateVisuals() {
+            function getBitcoinPrice() {
                 let xhr = new XMLHttpRequest()
-                xhr.open('GET', 'https://blockchain.info/ticker', true)
+                xhr.open('GET', 'https://blockchain.info/ticker')
                 xhr.send()
-                xhr.onload = function() {
-                    const jsonData = JSON.parse(xhr.response)
-                    const lastBitcoinPrice = jsonData.USD.last
-                    bitcoinPrice = priceDisplay.innerText = lastBitcoinPrice
+                xhr.onload = function(xhr) {
+                    paintBTCPrice(xhr)
                 }
+            }
+
+            /*  paintBTCPrice gets xhr response and filters the data
+                for US dollars and updates priceDisplay input and bitcoinPrice 
+            */
+            function paintBTCPrice(xhr) {
+                const jsonData = JSON.parse(xhr.target.response)
+                const lastBitcoinPrice = jsonData.USD.last
+                bitcoinPrice = priceDisplay.innerText = lastBitcoinPrice
+            }
+
+            /* refreshBTCPrice calls getBitcoinPrice function to get price 
+               update every 60 seconds.
+            */
+            function refreshBTCPrice() {
+                setInterval(() => {
+                    getBitcoinPrice()
+                }, 60000);
             }
         </script>
     </body>
